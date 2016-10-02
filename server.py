@@ -9,7 +9,8 @@ from flask import Flask, request, render_template, g, redirect, Response
 
 from models import messages_model
 
-app = Flask(__name__)
+tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+app = Flask(__name__, template_folder=tmpl_dir)
 
 DATABASEURI = "postgres://cwuepekp:SkVXF4KcwLJvTNKT41e7ruWQDcF3OSEU@jumbo.db.elephantsql.com:5432/cwuepekp"
 engine = create_engine(DATABASEURI)
@@ -41,29 +42,38 @@ def teardown_request(exception):
     print 'failed to safely close db connection'
 
 
+def _do_get():
+    model = messages_model.Messages(g.conn)
+
+    messages = model.get_messages()
+
+    return render_template('messages.html', messages=messages)
+
+def _do_post(request):
+    model = messages_model.Messages(g.conn)
+
+    message = request.form['message']
+
+    model.create_message(message)
+
+    # messages = model.get_messages()
+
+    return render_template('message-created.html')
+
 # GET /
 #   read all the messages render the template
 # POST /
 #   create the new message re-render all messages template
-
-
-
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    pass
-    # try:
-    #     pm = people_model.People(g.conn)
-    #     sm = shows_model.Shows(g.conn)
-    #     prom = providers_model.Providers(g.conn)
-    #
-    #     top_people = pm.get_top_people()
-    #     top_shows = sm.get_top_shows()
-    #     top_pro = prom.get_top_providers()
-    #
-    #     return render_template('index.html', people=top_people, shows=top_shows,
-    #         providers=top_pro)
-    # except:
-    #     import traceback; traceback.print_exc()
+    try:
+        if request.method == 'GET':
+            return _do_get()
+        else:
+            return _do_post(request)
+
+    except:
+        import traceback; traceback.print_exc()
 
 if __name__ == "__main__":
   import click

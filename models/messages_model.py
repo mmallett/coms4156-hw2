@@ -8,9 +8,9 @@ class Messages(Model):
 
     def get_messages(self):
         result = self.db.execute("SELECT * FROM messages;")
-        return self.deproxy(result)
+        return [s['message'] for s in self.deproxy(result)]
 
     def create_message(self, message):
         query = "INSERT INTO messages VALUES('$MESSAGE$');".replace('$MESSAGE$', message)
         result = self.db.execute(query)
-        return self.deproxy(result)
+        return

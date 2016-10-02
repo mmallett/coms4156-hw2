@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>these are the messages!</h1>
+{% for message in messages %}
+  <p>{{message}}</p>
+{% endfor %}
+
+<h1>make a new message</h1>
+<form method="POST" action="/">
+  <input type="text" placeholder="make a new message!!" name="message"></input>
+  <button type="submit">submit message</button>
+</form>
+
+{% endblock %}
