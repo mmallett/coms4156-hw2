@@ -75,6 +75,18 @@ def index():
     except:
         import traceback; traceback.print_exc()
 
+
+@app.route('/delete/<id>')
+def delete(id):
+    try:
+        model = messages_model.Messages(g.conn)
+        model.delete_message(id)
+        messages = model.get_messages()
+
+        return render_template('messages.html', messages=messages)
+    except:
+        import traceback; traceback.print_exc()
+
 if __name__ == "__main__":
   import click
 

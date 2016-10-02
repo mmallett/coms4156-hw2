@@ -3,7 +3,7 @@
 
 <h1>these are the messages!</h1>
 {% for message in messages %}
-  <p>{{message}}</p>
+  <p>{{message['message']}} <a href="/delete/{{message['id']}}">x</a></p>
 {% endfor %}
 
 <h1>make a new message</h1>
